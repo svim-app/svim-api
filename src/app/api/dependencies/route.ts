@@ -1,22 +1,14 @@
+import { supabase } from '@/utils/supabase';
 import { NextResponse } from 'next/server';
 
-const dependencies = [
-  {
-    parent: 'iron-sword',
-    components: [
-      { id: 'iron-ingot', quantity: 2 },
-      { id: 'wood-handle', quantity: 1 }
-    ]
-  },
-  {
-    parent: 'iron-ingot',
-    components: [
-      { id: 'iron-ore', quantity: 1 },
-      { id: 'coal', quantity: 1 }
-    ]
-  }
-];
-
 export async function GET() {
-  return NextResponse.json(dependencies);
+  const { data, error } = await supabase
+    .from('dependencies')
+    .select('parent_item_id, component_item_id, quantity');
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
 }
