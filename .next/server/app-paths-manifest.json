@@ -1,0 +1,4 @@
+{
+  "/api/items/route": "app/api/items/route.js",
+  "/api/dependencies/route": "app/api/dependencies/route.js"
+}
