@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'SVIM API',
+  description: 'Shared BitCraft Item & Dependency API',
+}
+
 export default function RootLayout({
   children,
 }: {
