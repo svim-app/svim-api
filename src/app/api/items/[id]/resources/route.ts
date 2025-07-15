@@ -3,6 +3,11 @@ import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 import { calculateResourceTotals } from '@/utils/resources';
 
+interface FlattenedResource {
+  item: string;
+  quantity: number;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -25,12 +30,21 @@ export async function GET(
     }
 
     // Calculate recursive resource totals
-    const resources = await calculateResourceTotals(itemId);
+    const resourceTotals = await calculateResourceTotals(itemId);
 
-    // Sort by item_id for consistent output
-    resources.sort((a, b) => a.item_id.localeCompare(b.item_id));
+    // Filter to only base materials and flatten the structure
+    const flattenedResources: FlattenedResource[] = resourceTotals
+      .filter(resource => resource.is_base_material)
+      .map(resource => ({
+        item: resource.item_id,
+        quantity: resource.total_quantity
+      }))
+      .sort((a, b) => a.item.localeCompare(b.item));
 
-    return NextResponse.json(resources);
+    return NextResponse.json({
+      item: itemId,
+      resources: flattenedResources
+    });
 
   } catch (error) {
     console.error('Error calculating resources:', error);
